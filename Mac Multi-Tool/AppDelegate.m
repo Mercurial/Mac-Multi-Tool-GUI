@@ -84,6 +84,18 @@
     [self.window makeKeyAndOrderFront:nil];
 }
 
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
+{
+    if (flag) {
+        return NO;
+    }
+    else
+    {
+        [self.window makeKeyAndOrderFront:self];// Window that you want open while click on dock app icon
+        return YES;
+    }
+}
+
 #pragma mark -
 #pragma mark Toolbar Functions
 
