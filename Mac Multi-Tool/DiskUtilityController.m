@@ -266,7 +266,7 @@ static NSSize imageSize;
     // kextcache -update-volume /
     path = @"/usr/sbin/kextcache";
     args = [NSArray arrayWithObjects:@"-update-volume", @"/", nil];
-    [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Rebuilding Kext Cache...\n", @"Start Message", @"Complete.\n\n\n", @"End Message", nil]];
+    [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Rebuilding Kext Cache...\n", @"Start Message", @"Complete.\n\n", @"End Message", nil]];
     
     [self launchNextTask];
 }
@@ -285,7 +285,7 @@ static NSSize imageSize;
         //[self launchPTWithPath:@"/usr/libexec/repair_packages" arguments:[NSArray arrayWithObjects:@"--repair", @"--standard-pkgs", @"--volume", [_currentDisk volumePath], nil]];*/
         NSString *path = @"/usr/libexec/repair_packages";
         NSArray *args = [NSArray arrayWithObjects:@"--repair", @"--standard-pkgs", @"--volume", [_currentDisk volumePath], nil];
-        [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n\n", @"End Message", @"Repairing permissions...\n", @"Start Message", nil]];
+        [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n", @"End Message", @"Repairing permissions...\n", @"Start Message", nil]];
         [self launchNextTask];
     }
 }
@@ -308,7 +308,7 @@ static NSSize imageSize;
         
         NSString *path = @"/usr/sbin/diskutil";
         NSArray *args = [NSArray arrayWithObjects:task, _currentDisk.BSDName, nil];
-        [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n\n", @"End Message", nil]];
+        [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n", @"End Message", nil]];
         [self launchNextTask];
     }
 }
@@ -319,20 +319,44 @@ static NSSize imageSize;
         NSLog(@"Disk: %@", _currentDisk.BSDName);
         //Build our privileged task for repairing disk
         
-        NSString *task = @"repairVolume";
-        if ([_currentDisk isWholeDisk]) {
-            task = @"repairDisk";
+        if (![_currentDisk isWholeDisk]) {
+            //task = @"repairDisk";
+        
+        
+            //Disable buttons
+            //[self disableButtons];
+        
+            //[self launchPTWithPath:@"/usr/sbin/diskutil" arguments:[NSArray arrayWithObjects:task, _currentDisk.BSDName, nil]];
+        
+            NSString *path = @"/usr/sbin/diskutil";
+            NSArray *args = [NSArray arrayWithObjects:@"repairVolume", _currentDisk.BSDName, nil];
+            [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n", @"End Message", nil]];
+            [self launchNextTask];
+        } else {
+            //Whole disk - display warning
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert addButtonWithTitle:@"OK"];
+            [alert addButtonWithTitle:@"Cancel"];
+            [alert setMessageText:@"Warning:"];
+            [alert setInformativeText:[NSString stringWithFormat:@"Repairing the partition map might erase %@, proceed?", _currentDisk.BSDName]];
+            [alert setAlertStyle:NSWarningAlertStyle];
+            
+            //Attach sheet
+            [alert beginSheetModalForWindow:[[self view] window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
         }
-        
-        //Disable buttons
-        //[self disableButtons];
-        
-        //[self launchPTWithPath:@"/usr/sbin/diskutil" arguments:[NSArray arrayWithObjects:task, _currentDisk.BSDName, nil]];
-        
-        NSString *path = @"/usr/sbin/diskutil";
-        NSArray *args = [NSArray arrayWithObjects:task, _currentDisk.BSDName, nil];
-        [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n\n", @"End Message", nil]];
+    }
+}
+
+- (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+    if (returnCode == NSAlertFirstButtonReturn) {
+        //NSLog(@"OK");
+        NSString *path = @"/bin/sh";
+        NSArray *args = [NSArray arrayWithObjects:@"-c", [NSString stringWithFormat:@"echo y | /usr/sbin/diskutil repairDisk %@", _currentDisk.BSDName], nil];
+        [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n", @"End Message", nil]];
         [self launchNextTask];
+    } else {
+        //NSLog(@"Cancel");
+        [self appendOutput:[NSString stringWithFormat:@"User canceled repair of %@.\n\n", _currentDisk.BSDName]];
     }
 }
 
@@ -694,7 +718,7 @@ static NSSize imageSize;
     if (err != errAuthorizationSuccess) {
         if (err == errAuthorizationCanceled) {
             NSLog(@"User cancelled");
-            [self appendOutput:@"\nUser Canceled.\n\n\n"];
+            [self appendOutput:@"\nUser Canceled.\n\n"];
             [_taskRunning setHidden:YES];
             [_taskRunning stopAnimation:nil];
             [self respondToSelectedItem:_diskView];
@@ -706,7 +730,7 @@ static NSSize imageSize;
             }
         } else {
             NSLog(@"Something went wrong");
-            [self appendOutput:@"\nSomething Went Wrong :(\n\n\n"];
+            [self appendOutput:@"\nSomething Went Wrong :(\n\n"];
             [_taskRunning setHidden:YES];
             [_taskRunning stopAnimation:nil];
             [self respondToSelectedItem:_diskView];
@@ -742,8 +766,9 @@ static NSSize imageSize;
         // do something with the data
         
         NSString *output = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        [self appendOutput:output];
-        
+        if (![output hasPrefix:@"Repairing the partition map might erase"]) {
+            [self appendOutput:output];
+        }
         // go read more data in the background
         [[aNotification object] readInBackgroundAndNotify];
     } else {

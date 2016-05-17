@@ -80,6 +80,10 @@
     // Insert code here to tear down your application
 }
 
+-(IBAction)showMainWindow:(id)sender {
+    [self.window makeKeyAndOrderFront:nil];
+}
+
 #pragma mark -
 #pragma mark Toolbar Functions
 
