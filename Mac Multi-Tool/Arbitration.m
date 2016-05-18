@@ -264,8 +264,8 @@ void DiskEjectCallback(DADiskRef diskRef, DADissenterRef dissenter, void *contex
     }
     else {
        // Log(LOG_DEBUG, @"%s disk ejected: %@ ", __func__, context);
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"DADiskDidAttemptEjectNotification" object:(__bridge id _Nullable)(context) userInfo:info];
     }
     
     //[[NSNotificationCenter defaultCenter] postNotificationName:@"DADiskDidAttemptEjectNotification" object:(__bridge id _Nullable)(context) userInfo:info];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"DADiskDidAttemptEjectNotification" object:(__bridge id _Nullable)(context) userInfo:nil];
 }
