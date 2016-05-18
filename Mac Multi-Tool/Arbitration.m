@@ -267,5 +267,5 @@ void DiskEjectCallback(DADiskRef diskRef, DADissenterRef dissenter, void *contex
     }
     
     //[[NSNotificationCenter defaultCenter] postNotificationName:@"DADiskDidAttemptEjectNotification" object:(__bridge id _Nullable)(context) userInfo:info];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"DADiskDidAttemptEjectNotification" object:(__bridge id _Nullable)(context) userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"DADiskDidAttemptEjectNotification" object:nil userInfo:info];
 }
