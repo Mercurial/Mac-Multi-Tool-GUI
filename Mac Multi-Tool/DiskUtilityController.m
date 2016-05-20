@@ -10,6 +10,8 @@
 #import "Arbitration.h"
 #import "AAPLImageAndTextCell.h"
 #import "STPrivilegedTask.h"
+#import "CNCreateDiskController.h"
+#import "CNPopoverController.h"
 
 @import ServiceManagement;
 @import AppKit;
@@ -20,6 +22,14 @@
 #define IMAGE_PAD                   3
 
 static NSSize imageSize;
+
+@interface DiskUtilityController ()
+
+@property (strong) CNCreateDiskController *diskController;
+@property (strong) CNPopoverController *popoverViewController;
+@property (strong) NSWindow *detachedWindow;
+
+@end
 
 #pragma mark -
 
@@ -38,6 +48,36 @@ static NSSize imageSize;
         _runningTask = NO;
         [_taskRunning setUsesThreadedAnimation:YES];
         _tasksToRun = [[NSMutableArray alloc] init];
+        
+        //Setup blank image stuff
+        self.formatTypes = [NSArray arrayWithObjects:       @"Journaled HFS+",
+                                                            @"Case-sensitive Journaled HFS+",
+                                                            @"MS-DOS FAT32",
+                                                            @"ExFAT",
+                                                            nil];
+        self.encryptionTypes = [NSArray arrayWithObjects:   @"none",
+                                                            @"AES-128",
+                                                            @"AES-256",
+                                                            nil];
+        self.partitionTypes = [NSArray arrayWithObjects:    @"ISOCD",
+                                                            @"SPUD",
+                                                            @"GPTSPUD",
+                                                            @"MBRSPUD",
+                                                            @"NONE",
+                                                            nil];
+        self.imageTypes = [NSArray arrayWithObjects:        @"SPARSEBUNDLE",
+                                                            @"SPARSE",
+                                                            @"UDIF",
+                                                            @"UDTO",
+                                                            nil];
+        self.cdSizeTypes = [NSArray arrayWithObjects:       @"177m",
+                                                            @"650m",
+                                                            @"700m",
+                                                            @"2.5g",
+                                                            @"4.6g",
+                                                            @"8.3g",
+                                                            nil];
+        
         
         // Disk Arbitration
         RegisterDA();
@@ -101,16 +141,18 @@ static NSSize imageSize;
     
     //[_diskSize NSProgressIndicatorThickness]
     
+    //[NSApp setMainMenu:_mainMenu];
+    
     
     //Setup our popover button
-    /*_popoverViewController = [[NSClassFromString(@"CNPopoverController") alloc] init];
+    _popoverViewController = [[NSClassFromString(@"CNPopoverController") alloc] init];
     
     NSRect frame = self.popoverViewController.view.bounds;
     NSUInteger styleMask = NSTitledWindowMask + NSClosableWindowMask;
     NSRect rect = [NSWindow contentRectForFrameRect:frame styleMask:styleMask];
     _detachedWindow = [[NSWindow alloc] initWithContentRect:rect styleMask:styleMask backing:NSBackingStoreBuffered defer:YES];
     self.detachedWindow.contentViewController = self.popoverViewController;
-    self.detachedWindow.releasedWhenClosed = NO;*/
+    self.detachedWindow.releasedWhenClosed = NO;
     
     
     [_diskView reloadData];
@@ -157,12 +199,15 @@ static NSSize imageSize;
         _currentDisk = disk;
         [_repairDiskButton setEnabled:YES];
         [_verifyDiskButton setEnabled:YES];
-        [_ejectButton setEnabled:NO];
+        //[_ejectButton setEnabled:NO];
         [_mountButton setEnabled:NO];
+        [_mountText setStringValue:@"Mount"];
         [_repairPermissionsButton setEnabled:NO];
         if ([disk isMounted]) {
+            [_mountText setStringValue:@"Unmount"];
             if (![[disk volumePath] isEqualToString:@"/"]) {
-                [_ejectButton setEnabled:YES];
+                //[_ejectButton setEnabled:YES];
+                [_mountButton setEnabled:YES];
             } else {
                 [_repairPermissionsButton setEnabled:YES];
                 [_repairDiskButton setEnabled:NO];
@@ -171,14 +216,15 @@ static NSSize imageSize;
             [_mountButton setEnabled:YES];
         } else if ([disk isWholeDisk] && ([disk isEjectable] || [disk isRemovable])) {
             BOOL anyMounted = NO;
+            [_mountButton setEnabled:YES];
             for (Disk *child in [disk children]) {
                 // Find out if all disks are unmounted
                 if ([child isMounted]) anyMounted = YES;
             }
             if (anyMounted) {
-                [_ejectButton setEnabled:YES];
+                [_mountText setStringValue:@"Unmount"];
             } else {
-                [_mountButton setEnabled:YES];
+                //[_mountText setStringValue:@"Mount"];
             }
         }
         
@@ -186,8 +232,10 @@ static NSSize imageSize;
         // Setup top & bottom of window info
         if ([disk volumeName]) {
             [_diskNameField setStringValue:[disk volumeName]];
+            [_diskImage setTitle:[NSString stringWithFormat:@"Image From %@...", [disk volumeName]]];
         } else if ([disk mediaName]) {
             [_diskNameField setStringValue:[disk mediaName]];
+            [_diskImage setTitle:[NSString stringWithFormat:@"Image From %@...", [disk mediaName]]];
         }
         
         // Get the icon
@@ -342,12 +390,12 @@ static NSSize imageSize;
             [alert setAlertStyle:NSWarningAlertStyle];
             
             //Attach sheet
-            [alert beginSheetModalForWindow:[[self view] window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
+            [alert beginSheetModalForWindow:[[self view] window] modalDelegate:self didEndSelector:@selector(repairAlertDidEnd:returnCode:contextInfo:) contextInfo:nil];
         }
     }
 }
 
-- (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+- (void)repairAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
     if (returnCode == NSAlertFirstButtonReturn) {
         //NSLog(@"OK");
         NSString *path = @"/bin/sh";
@@ -357,6 +405,28 @@ static NSSize imageSize;
     } else {
         //NSLog(@"Cancel");
         [self appendOutput:[NSString stringWithFormat:@"User canceled repair of %@.\n\n", _currentDisk.BSDName]];
+    }
+}
+
+- (IBAction)toggleMount:(id)sender {
+    id selectedItem = [_diskView itemAtRow:[_diskView selectedRow]];
+    Disk *disk = selectedItem;
+    if (!disk) return;
+    
+    if ([[_mountText stringValue] isEqualToString:@"Mount"]) {
+        if ([disk isWholeDisk]) {
+            [disk mountWhole];
+        } else {
+            [disk mount];
+        }
+    } else {
+        if ([selectedItem isKindOfClass:[Disk class]]) {
+            if ([disk isWholeDisk] && [disk isEjectable]) {
+                [self performEject:disk];
+            } else {
+                [disk unmountWithOptions: disk.isWholeDisk ?  kDiskUnmountOptionWhole : kDiskUnmountOptionDefault];
+            }
+        }
     }
 }
 
@@ -424,6 +494,176 @@ static NSSize imageSize;
     }
 }
 
+-(IBAction)diskImageClick:(id)sender {
+    //Show our menu over our new disk image button.
+    NSButton * b = (NSButton*)sender;
+    NSPoint l = [ self convertPointToScreen:b.frame.origin ];
+    
+    [_blankImage setEnabled:YES];
+    [_folderImage setEnabled:YES];
+    [_diskImage setEnabled:NO];
+    
+    [ _diskImageMenu popUpMenuPositioningItem:nil atLocation:l inView:nil ];
+}
+
+- (IBAction)diskImageBlankFormatChange:(id)sender {
+    //Change from manual size entry to a popup menu if using
+    //DVD/CD master image format
+    NSString *selected = [_imageFormatPopup titleOfSelectedItem];
+    if ([selected isEqualToString:@"DVD/CD master"]) {
+        [_sizePopup setHidden:NO];
+        [_sizeTextField setHidden:YES];
+        [_sizeTextPopup setHidden:YES];
+    } else {
+        [_sizePopup setHidden:YES];
+        [_sizeTextField setHidden:NO];
+        [_sizeTextPopup setHidden:NO];
+    }
+}
+
+- (IBAction)checkBlankSize:(id)sender {
+    //We need to check if our size string includes one of the following:
+    //
+    // B = bytes
+    // K, KB = kilobytes
+    // M, MB = megabytes
+    // G, GB = gigabytes
+    // T, TB = terabytes
+    // P, PB = petabytes
+    // E, EB = exabyte - we're not using this...
+    //
+    // And whether it is the min size or not
+    // Minimum size is 10 MB
+    
+    
+    //This was fixed with an NSNumberFormater - and a popup button
+    //that allows for MB, GB, TB
+    
+    NSString *suffix = [_sizeTextPopup titleOfSelectedItem];
+    float size = [_sizeTextField floatValue];
+    
+    //Check for minimum size (10 MB)
+    
+    if ([suffix isEqualToString:@"MB"]) {
+        if (size < 10) {
+            [self sizeTextFieldBeep];
+        }
+        
+    } else if ([suffix isEqualToString:@"GB"]) {
+        if (size < 0.001) {
+            [self sizeTextFieldBeep];
+        }
+    } else {
+        if (size < 0.000001) {
+            [self sizeTextFieldBeep];
+        }
+    }
+    
+}
+
+- (IBAction)diskImageBlank:(id)sender {
+    //Let's show our save panel sheet
+    //Whole disk - display warning
+    NSSavePanel *blank = [[NSSavePanel alloc] init];
+    [blank setTitle:@"New Disk Image"];
+    [blank setAllowedFileTypes:[NSArray arrayWithObjects:@"dmg", @"cdr", @"sparseimage", @"sparsebundle", nil]];
+    [blank setExtensionHidden:NO];
+    [blank setCanSelectHiddenExtension:YES];
+    [blank setAccessoryView:_blankImageView];
+    
+    //Attach sheet
+    [blank beginSheetModalForWindow:[[self view] window] completionHandler:^(NSInteger result) {
+        //Handle the shit.
+        if (result == NSFileHandlingPanelOKButton) {
+            //We clicked Okay
+            NSURL *theFile = [blank URL];
+            NSLog(@"Saved disk image: %@", theFile);
+            
+            //Let's get our image type and size and stuff
+            
+            
+            
+            //Let's run our modal window to kick some ask
+            
+            self.diskController = [[CNCreateDiskController alloc] initWithWindowNibName:@"CNCreateDiskController"];
+            
+            //This is *only called to load the window nib.
+            //Without it, we couldn't get references to the other parts.
+            [self.diskController.window setTitle:@""];
+            
+            //We need to preset all the fields
+            NSString *volName = [self.nameTextField stringValue];
+            NSString *name = [NSString stringWithFormat:@"Creating \"%@\"...", volName];
+            NSString *fs = [self.formatTypes objectAtIndex:[self.formatPopup indexOfSelectedItem]];
+            NSString *size;
+             if ([[_imageFormatPopup titleOfSelectedItem] isEqualToString:@"DVD/CD master"]) {
+                 size = [self.cdSizeTypes objectAtIndex:[self.sizePopup indexOfSelectedItem]];
+             } else {
+                 NSString *suffix = [self.sizeTextPopup titleOfSelectedItem];
+                 NSString *end = @"m";
+                 if ([suffix isEqualToString:@"GB"]) {
+                     end = @"g";
+                 } else if ([suffix isEqualToString:@"TB"]) {
+                     end = @"t";
+                 }
+                 size = [NSString stringWithFormat:@"%@%@", [self.sizeTextField stringValue], end];
+             }
+            NSString *encrypt = [self.encryptionTypes objectAtIndex:[self.encryptionPopup indexOfSelectedItem]];
+            NSString *layout = [self.partitionTypes objectAtIndex:[self.partitionsPopup indexOfSelectedItem]];
+            NSString *type = [self.imageTypes objectAtIndex:[self.imageFormatPopup indexOfSelectedItem]];
+            
+            NSString *desc = [NSString stringWithFormat:@"%@, %@, %@, %@, %@", type, fs, size, layout, encrypt];
+            
+            
+            NSString *command = [NSString stringWithFormat:@"hdiutil create -fs \"%@\" -type %@ -layout %@ -size %@ -volname \"%@\" \"%@\"", fs, type, layout, size, volName, [theFile path]];
+            
+            
+            
+            
+            [self.diskController.detail setString:command];
+            [self.diskController.name setStringValue:name];
+            [self.diskController.desc setStringValue:desc];
+            
+            
+            [[[self view] window] beginSheet:self.diskController.window  completionHandler:^(NSModalResponse returnCode) {
+                NSLog(@"Sheet closed");
+                
+                //[_createImageModalProgress setIndeterminate:YES];
+                //[_createImageModalProgress startAnimation:nil];
+                
+                switch (returnCode) {
+                    case NSModalResponseOK:
+                        NSLog(@"Done button tapped in Custom Sheet");
+                        break;
+                    case NSModalResponseCancel:
+                        NSLog(@"Cancel button tapped in Custom Sheet");
+                        break;
+                        
+                    default:
+                        break;
+                }
+            }];
+            
+            
+        }
+        
+    }];
+    //[blank beginSheetModalForWindow:[[self view] window] modalDelegate:self didEndSelector:@selector(repairAlertDidEnd:returnCode:contextInfo:) contextInfo:nil];
+    
+    
+}
+
+- (IBAction)doneWithSheet:(id)sender {
+    [_createImageModalWindow.sheetParent endSheet:_createImageModalWindow returnCode:NSModalResponseOK];
+}
+
+- (IBAction)diskImageFolder:(id)sender {
+    
+}
+
+- (IBAction)diskImageDisk:(id)sender {
+    
+}
 
 #pragma mark - Outline View Delegate Methods
 
@@ -811,10 +1051,23 @@ static NSSize imageSize;
     [_rebuildKextCacheButton setEnabled:NO];
     [_repairDiskButton setEnabled:NO];
     [_verifyDiskButton setEnabled:NO];
-    [_ejectButton setEnabled:NO];
+    //[_ejectButton setEnabled:NO];
     [_mountButton setEnabled:NO];
+    [_eraseButton setEnabled:NO];
+    [_partitionButton setEnabled:NO];
+    //[_diskImageButton setEnabled:NO];
 }
 
+- (NSPoint) convertPointToScreen:(NSPoint)point
+{
+    NSRect convertRect = [[[self view] window] convertRectToScreen:NSMakeRect(point.x, point.y, 0.0, 0.0)];
+    return NSMakePoint(convertRect.origin.x, convertRect.origin.y);
+}
 
+- (void)sizeTextFieldBeep {
+    NSBeep();
+    [_sizeTextField setStringValue:@"10"];
+    [_sizeTextPopup selectItemWithTitle:@"MB"];
+}
 
 @end

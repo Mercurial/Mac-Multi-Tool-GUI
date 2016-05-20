@@ -29,11 +29,35 @@ enum {
 @property (weak) IBOutlet NSProgressIndicator *taskRunning;
 @property IBOutlet NSTextView *outputText;
 
-@property (assign) IBOutlet NSTableView *tableView;
-@property (assign) IBOutlet NSArrayController *disksArrayController;
-
-@property (assign) IBOutlet NSButton *ejectButton;
 @property (assign) IBOutlet NSButton *mountButton;
+@property (assign) IBOutlet NSTextField *mountText;
+@property (assign) IBOutlet NSButton *eraseButton;
+@property (assign) IBOutlet NSButton *partitionButton;
+@property (assign) IBOutlet NSButton *diskImageButton;
+@property (assign) IBOutlet NSMenu *diskImageMenu;
+
+@property (assign) IBOutlet NSView *blankImageView;
+
+@property (assign) IBOutlet NSWindow *createImageModalWindow;
+@property (assign) IBOutlet NSImageView *createImageModalImage;
+@property (assign) IBOutlet NSTextField *createImageModalNameText;
+@property (assign) IBOutlet NSTextField *createImageModalSubText;
+@property (assign) IBOutlet NSTextView *createImageModalDetailText;
+@property (assign) IBOutlet NSButton *createImageModalDone;
+@property (assign) IBOutlet NSProgressIndicator *createImageModalProgress;
+
+@property (assign) IBOutlet NSTextField *nameTextField;
+@property (assign) IBOutlet NSPopUpButton *sizePopup;
+@property (assign) IBOutlet NSTextField *sizeTextField;
+@property (assign) IBOutlet NSPopUpButton *sizeTextPopup;
+@property (assign) IBOutlet NSPopUpButton *formatPopup;
+@property (assign) IBOutlet NSPopUpButton *encryptionPopup;
+@property (assign) IBOutlet NSPopUpButton *partitionsPopup;
+@property (assign) IBOutlet NSPopUpButton *imageFormatPopup;
+
+@property (assign) IBOutlet NSMenuItem *blankImage;
+@property (assign) IBOutlet NSMenuItem *folderImage;
+@property (assign) IBOutlet NSMenuItem *diskImage;
 
 @property (assign) IBOutlet NSTextField *diskNameField;
 @property (assign) IBOutlet NSTextField *diskInfoField;
@@ -61,6 +85,11 @@ enum {
 @property NSRect selected;
 @property BOOL _shouldResize;
 @property BOOL runningTask;
+@property NSArray *formatTypes;
+@property NSArray *encryptionTypes;
+@property NSArray *partitionTypes;
+@property NSArray *imageTypes;
+@property NSArray *cdSizeTypes;
 
 //Work with this more later - right now just a placeholder.
 @property BOOL currentlyWorking;

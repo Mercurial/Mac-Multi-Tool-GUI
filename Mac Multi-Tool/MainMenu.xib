@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
@@ -68,9 +68,16 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="bib-Uj-vzu">
                         <items>
-                            <menuItem title="New" keyEquivalent="n" id="Was-JA-tGl">
+                            <menuItem title="New Image" id="Was-JA-tGl">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="newDocument:" target="-1" id="4Si-XN-c54"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Clear Menu" id="nmE-fx-IrC">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="clearRecentDocuments:" target="-1" id="naB-oG-hXM"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open…" keyEquivalent="o" id="IAo-SY-fd9">
@@ -684,5 +691,138 @@
             </view>
             <point key="canvasLocation" x="283" y="255"/>
         </window>
+        <customView id="JxY-U7-Ttq">
+            <rect key="frame" x="0.0" y="0.0" width="426" height="192"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PBT-7X-OOA">
+                    <rect key="frame" x="93" y="100" width="324" height="22"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Ahf-gy-Mbv" id="3c5-nC-7mj">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="smallSystem"/>
+                        <menu key="menu" id="zgB-Nl-NWn">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="Ahf-gy-Mbv"/>
+                                <menuItem title="Item 2" id="49z-MG-RwI"/>
+                                <menuItem title="Item 3" id="MGR-m6-0K1"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gm8-IH-N6N">
+                    <rect key="frame" x="46" y="155" width="44" height="14"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Name:" id="lpN-Ha-Yge">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BdY-VK-32Y">
+                    <rect key="frame" x="96" y="153" width="318" height="19"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="Untitled" drawsBackground="YES" id="2st-Ky-KBx">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="96k-qT-WaL">
+                    <rect key="frame" x="46" y="131" width="44" height="14"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Size:" id="rS8-Lz-TvD">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9fq-WQ-Faq">
+                    <rect key="frame" x="45" y="105" width="45" height="14"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Format:" id="fEl-wQ-dXb">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="esL-Lq-S3s">
+                    <rect key="frame" x="96" y="129" width="318" height="19"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="100 MB" drawsBackground="YES" id="pFJ-Ow-0kn">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <box verticalHuggingPriority="750" fixedFrame="YES" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3RI-cN-5Xu">
+                    <rect key="frame" x="12" y="92" width="402" height="5"/>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <font key="titleFont" metaFont="system"/>
+                </box>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1oE-Q5-thU">
+                    <rect key="frame" x="93" y="41" width="324" height="22"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="we9-qe-hOF" id="WLq-Yq-8d8">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="smallSystem"/>
+                        <menu key="menu" id="B1B-Rf-kfc">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="we9-qe-hOF"/>
+                                <menuItem title="Item 2" id="tqe-kP-vqE"/>
+                                <menuItem title="Item 3" id="G5f-tL-1NX"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qde-Pc-0iC">
+                    <rect key="frame" x="32" y="46" width="58" height="14"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Partitions:" id="fFe-Lm-H0o">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5pv-Hz-Qi2">
+                    <rect key="frame" x="93" y="17" width="324" height="22"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="gFj-fo-Jfz" id="j6x-ik-BvO">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="smallSystem"/>
+                        <menu key="menu" id="GdI-QD-gBE">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="gFj-fo-Jfz"/>
+                                <menuItem title="Item 2" id="dnO-Af-CRA"/>
+                                <menuItem title="Item 3" id="qfn-vS-yKg"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FZg-gq-cBU">
+                    <rect key="frame" x="10" y="22" width="80" height="14"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Image Format:" id="Skf-zp-lWW">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="huO-f0-04n">
+                    <rect key="frame" x="93" y="65" width="324" height="22"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="hAN-Bs-60K" id="mpR-tu-d1d">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="smallSystem"/>
+                        <menu key="menu" id="iRT-Tx-CH9">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="hAN-Bs-60K"/>
+                                <menuItem title="Item 2" id="KUa-g5-j2D"/>
+                                <menuItem title="Item 3" id="I1h-G6-FJt"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ltZ-Kv-Tby">
+                    <rect key="frame" x="26" y="70" width="64" height="14"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Encryption:" id="IHx-5G-gx8">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <point key="canvasLocation" x="229" y="692"/>
+        </customView>
     </objects>
 </document>
