@@ -25,8 +25,10 @@
     NSInteger row = [self rowAtPoint:localPoint];
     NSInteger col = [self columnAtPoint:localPoint];
     
-    // If the user didn't click on a row, we're done
+    // If the user didn't click on a row, we need to
+    // check selection still
     if (row < 0) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"OutlineViewSelected" object:self userInfo:nil];
         return;
     }
     

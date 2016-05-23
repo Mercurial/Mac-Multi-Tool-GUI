@@ -47,6 +47,8 @@ extern const OSStatus errAuthorizationFnNoLongerExists;
 
 @property (copy) void (^terminationHandler)(STPrivilegedTask *);
 
+@property NSString *notificationToPost;
+
 - (instancetype)initWithLaunchPath:(NSString *)path;
 - (instancetype)initWithLaunchPath:(NSString *)path arguments:(NSArray *)args;
 - (instancetype)initWithLaunchPath:(NSString *)path arguments:(NSArray *)args currentDirectory:(NSString *)cwd;

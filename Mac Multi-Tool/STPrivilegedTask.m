@@ -46,6 +46,7 @@ OSStatus const errAuthorizationFnNoLongerExists = -70001;
 {
     self = [super init];
     if (self) {
+        _notificationToPost = STPrivilegedTaskDidTerminateNotification;
         _launchPath = nil;
         _arguments = nil;
         _isRunning = NO;
@@ -265,7 +266,7 @@ OSStatus const errAuthorizationFnNoLongerExists = -70001;
     if (pid != 0) {
         _isRunning = NO;
         [checkStatusTimer invalidate];
-        [[NSNotificationCenter defaultCenter] postNotificationName:STPrivilegedTaskDidTerminateNotification object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:_notificationToPost object:self];
         if (_terminationHandler) {
             _terminationHandler(self);
         }

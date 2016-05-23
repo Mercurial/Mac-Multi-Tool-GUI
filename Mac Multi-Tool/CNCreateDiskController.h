@@ -17,4 +17,11 @@
 @property (assign) IBOutlet NSButton *doneButton;
 @property (assign) IBOutlet NSProgressIndicator *progress;
 
+@property NSFileHandle *readHandle;
+@property NSMutableArray *taskList;
+@property BOOL runningTask;
+
+- (void)setTaskArray:(NSArray *)tList;
+- (void)startProcess;
+
 @end

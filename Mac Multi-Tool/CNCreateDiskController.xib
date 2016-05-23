@@ -7,15 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CNCreateDiskController">
             <connections>
-                <outlet property="createImageModalDetailText" destination="kYH-VA-3Xx" id="hUB-nE-GXh"/>
-                <outlet property="createImageModalDone" destination="ZXb-mC-Hsc" id="Dhk-OQ-grG"/>
-                <outlet property="createImageModalImage" destination="Kc0-2x-I0T" id="6Hd-Ri-m4V"/>
-                <outlet property="createImageModalNameText" destination="lVk-6g-LBT" id="uZ2-Cx-rC3"/>
-                <outlet property="createImageModalProgress" destination="wsP-kg-eTw" id="3Et-ij-8py"/>
-                <outlet property="createImageModalSubText" destination="O81-0l-ZhY" id="LmE-FP-ebJ"/>
-                <outlet property="createImageModalWindow" destination="HKz-sA-XE7" id="Zwn-14-Lb1"/>
                 <outlet property="desc" destination="O81-0l-ZhY" id="njt-3e-yaX"/>
-                <outlet property="description" destination="O81-0l-ZhY" id="jUX-z7-a78"/>
                 <outlet property="detail" destination="kYH-VA-3Xx" id="BVV-Ml-c7N"/>
                 <outlet property="doneButton" destination="ZXb-mC-Hsc" id="eKv-S7-NCU"/>
                 <outlet property="image" destination="Kc0-2x-I0T" id="Gai-yu-cIp"/>

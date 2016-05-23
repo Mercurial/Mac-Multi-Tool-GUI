@@ -38,13 +38,13 @@ enum {
 
 @property (assign) IBOutlet NSView *blankImageView;
 
-@property (assign) IBOutlet NSWindow *createImageModalWindow;
+/*@property (assign) IBOutlet NSWindow *createImageModalWindow;
 @property (assign) IBOutlet NSImageView *createImageModalImage;
 @property (assign) IBOutlet NSTextField *createImageModalNameText;
 @property (assign) IBOutlet NSTextField *createImageModalSubText;
 @property (assign) IBOutlet NSTextView *createImageModalDetailText;
 @property (assign) IBOutlet NSButton *createImageModalDone;
-@property (assign) IBOutlet NSProgressIndicator *createImageModalProgress;
+@property (assign) IBOutlet NSProgressIndicator *createImageModalProgress;*/
 
 @property (assign) IBOutlet NSTextField *nameTextField;
 @property (assign) IBOutlet NSPopUpButton *sizePopup;
@@ -52,6 +52,9 @@ enum {
 @property (assign) IBOutlet NSPopUpButton *sizeTextPopup;
 @property (assign) IBOutlet NSPopUpButton *formatPopup;
 @property (assign) IBOutlet NSPopUpButton *encryptionPopup;
+@property (assign) IBOutlet NSSecureTextField *encryptionSecureField;
+@property (assign) IBOutlet NSTextField *encryptionTextField;
+@property (assign) IBOutlet NSButton *encryptionShowButton;
 @property (assign) IBOutlet NSPopUpButton *partitionsPopup;
 @property (assign) IBOutlet NSPopUpButton *imageFormatPopup;
 

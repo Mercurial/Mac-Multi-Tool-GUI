@@ -24,6 +24,9 @@
                 <outlet property="diskView" destination="mKm-he-d4b" id="1AH-ND-NKA"/>
                 <outlet property="ejectButton" destination="gdA-pV-Pfd" id="OLi-S4-oiR"/>
                 <outlet property="encryptionPopup" destination="DpM-xn-LtU" id="Y4P-hs-EnN"/>
+                <outlet property="encryptionSecureField" destination="Mu0-wH-3xx" id="yoo-2H-o2W"/>
+                <outlet property="encryptionShowButton" destination="bqQ-qz-uMt" id="u5Y-Yq-WrV"/>
+                <outlet property="encryptionTextField" destination="i58-ya-GeE" id="bky-ge-1hi"/>
                 <outlet property="eraseButton" destination="Dg0-I3-SOw" id="x9d-je-jb3"/>
                 <outlet property="folderImage" destination="BDL-WF-w9i" id="q0m-Z8-Zjb"/>
                 <outlet property="formatPopup" destination="Nwg-SX-StH" id="M4U-FL-5DX"/>
@@ -414,11 +417,11 @@
             <point key="canvasLocation" x="625" y="798"/>
         </customView>
         <customView id="0qx-CW-TvR">
-            <rect key="frame" x="0.0" y="0.0" width="426" height="192"/>
+            <rect key="frame" x="0.0" y="0.0" width="426" height="223"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nwg-SX-StH">
-                    <rect key="frame" x="93" y="100" width="324" height="22"/>
+                    <rect key="frame" x="93" y="131" width="324" height="22"/>
                     <popUpButtonCell key="cell" type="push" title="OS X Extended (Journaled)" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="OJy-DG-7K4" id="PDz-DT-vyt">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -433,7 +436,7 @@
                     </popUpButtonCell>
                 </popUpButton>
                 <popUpButton hidden="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r4y-b0-aCR">
-                    <rect key="frame" x="93" y="126" width="324" height="22"/>
+                    <rect key="frame" x="93" y="157" width="324" height="22"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Jxu-wm-dUW">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -450,7 +453,7 @@
                     </popUpButtonCell>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oSz-LX-MXy">
-                    <rect key="frame" x="46" y="155" width="44" height="14"/>
+                    <rect key="frame" x="46" y="186" width="44" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Name:" id="TUI-3M-STs">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -458,7 +461,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tI5-Ea-TvB">
-                    <rect key="frame" x="96" y="153" width="318" height="19"/>
+                    <rect key="frame" x="96" y="184" width="318" height="19"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="Untitled" drawsBackground="YES" id="XDJ-eW-252">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -466,7 +469,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fOi-Pn-OQv">
-                    <rect key="frame" x="60" y="131" width="30" height="14"/>
+                    <rect key="frame" x="60" y="162" width="30" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Size:" id="nHE-k7-FUW">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -474,7 +477,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SNU-TQ-EZu">
-                    <rect key="frame" x="45" y="105" width="45" height="14"/>
+                    <rect key="frame" x="45" y="136" width="45" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Format:" id="pv7-NQ-Muu">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -482,7 +485,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GC9-pR-vlx">
-                    <rect key="frame" x="96" y="129" width="318" height="19"/>
+                    <rect key="frame" x="96" y="160" width="318" height="19"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="100" drawsBackground="YES" id="ldL-je-qr1">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="hDv-cv-JJV"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -494,7 +497,7 @@
                     </textFieldCell>
                 </textField>
                 <box verticalHuggingPriority="750" fixedFrame="YES" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="enK-uO-OyU">
-                    <rect key="frame" x="12" y="92" width="402" height="5"/>
+                    <rect key="frame" x="12" y="123" width="402" height="5"/>
                     <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <font key="titleFont" metaFont="system"/>
@@ -550,29 +553,40 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DpM-xn-LtU">
-                    <rect key="frame" x="93" y="65" width="324" height="22"/>
-                    <popUpButtonCell key="cell" type="push" title="none" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="L1e-ws-XFP" id="EHL-Ep-p0y">
+                    <rect key="frame" x="93" y="96" width="324" height="22"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="EHL-Ep-p0y">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
                         <menu key="menu" id="IXJ-zR-PeZ">
                             <items>
-                                <menuItem title="none" state="on" id="L1e-ws-XFP"/>
+                                <menuItem title="none" id="L1e-ws-XFP"/>
                                 <menuItem title="128-bit AES encryption (recommended)" id="0VV-xT-XuC"/>
                                 <menuItem title="256-bit AES encryption (more secure, but slower)" id="Qen-fm-tiv"/>
                             </items>
                         </menu>
                     </popUpButtonCell>
+                    <connections>
+                        <action selector="diskImageEncryptionChange:" target="-2" id="CLw-qn-Xw6"/>
+                    </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qju-Qb-5zI">
-                    <rect key="frame" x="26" y="70" width="64" height="14"/>
+                    <rect key="frame" x="26" y="101" width="64" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Encryption:" id="No9-Cc-6a9">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pzx-SH-40d">
+                    <rect key="frame" x="35" y="73" width="55" height="14"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Password" id="9Ck-HR-WFn">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kcl-Dp-jxe">
-                    <rect key="frame" x="9" y="126" width="52" height="22"/>
+                    <rect key="frame" x="9" y="157" width="52" height="22"/>
                     <popUpButtonCell key="cell" type="push" title="MB" bezelStyle="rounded" alignment="right" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" arrowPosition="noArrow" selectedItem="Gae-CZ-eyU" id="iTf-rI-qEP">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -585,19 +599,53 @@
                         </menu>
                     </popUpButtonCell>
                 </popUpButton>
+                <secureTextField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mu0-wH-3xx">
+                    <rect key="frame" x="96" y="70" width="264" height="19"/>
+                    <secureTextFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="LQf-9r-sW0">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <allowedInputSourceLocales>
+                            <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                        </allowedInputSourceLocales>
+                    </secureTextFieldCell>
+                </secureTextField>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bqQ-qz-uMt">
+                    <rect key="frame" x="365" y="70" width="51" height="20"/>
+                    <buttonCell key="cell" type="check" title="Show" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="bcG-9W-8Li">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="smallSystem"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="showPassword:" target="-2" id="akd-xg-hBc"/>
+                    </connections>
+                </button>
+                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i58-ya-GeE">
+                    <rect key="frame" x="96" y="70" width="264" height="19"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="j0w-N1-sIE">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
             </subviews>
-            <point key="canvasLocation" x="1348" y="850"/>
+            <point key="canvasLocation" x="1348" y="865.5"/>
         </customView>
         <menu title="New Image" autoenablesItems="NO" id="ftu-aM-afg">
             <items>
-                <menuItem title="Blank Image..." keyEquivalent="n" id="XoI-2q-rxY">
+                <menuItem title="Blank Image..." id="XoI-2q-rxY">
+                    <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="diskImageBlank:" target="-2" id="OA1-qS-oYp"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="htF-SG-WSS"/>
-                <menuItem title="Image From Folder..." keyEquivalent="N" id="BDL-WF-w9i"/>
-                <menuItem title="Image From Disk..." keyEquivalent="N" id="vVZ-DA-sRE"/>
+                <menuItem title="Image From Folder..." id="BDL-WF-w9i">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Image From Disk..." id="vVZ-DA-sRE">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
             </items>
         </menu>
     </objects>

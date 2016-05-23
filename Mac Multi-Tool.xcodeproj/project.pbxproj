@@ -30,6 +30,8 @@
 		455DA3D51C70526A0002D061 /* DiskUtilityController.m in Sources */ = {isa = PBXBuildFile; fileRef = 455DA3D01C70526A0002D061 /* DiskUtilityController.m */; };
 		455DA3D61C70526A0002D061 /* Arbitration.m in Sources */ = {isa = PBXBuildFile; fileRef = 455DA3D21C70526A0002D061 /* Arbitration.m */; };
 		455DA3D71C70526A0002D061 /* Disk.m in Sources */ = {isa = PBXBuildFile; fileRef = 455DA3D41C70526A0002D061 /* Disk.m */; };
+		456261C91CF2830300290AAC /* CNModalPassController.m in Sources */ = {isa = PBXBuildFile; fileRef = 456261C71CF2830300290AAC /* CNModalPassController.m */; };
+		456261CA1CF2830300290AAC /* CNModalPassController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 456261C81CF2830300290AAC /* CNModalPassController.xib */; };
 		4578BA461CE8808900A91F51 /* STPrivilegedTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 4578BA451CE8808900A91F51 /* STPrivilegedTask.m */; };
 		4587EDBC1C64185B0064A816 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4587EDBB1C64185B0064A816 /* AppDelegate.m */; };
 		4587EDBF1C64185B0064A816 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4587EDBE1C64185B0064A816 /* main.m */; };
@@ -95,6 +97,9 @@
 		455DA3D21C70526A0002D061 /* Arbitration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Arbitration.m; sourceTree = "<group>"; };
 		455DA3D31C70526A0002D061 /* Disk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Disk.h; sourceTree = "<group>"; };
 		455DA3D41C70526A0002D061 /* Disk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Disk.m; sourceTree = "<group>"; };
+		456261C61CF2830300290AAC /* CNModalPassController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNModalPassController.h; sourceTree = "<group>"; };
+		456261C71CF2830300290AAC /* CNModalPassController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CNModalPassController.m; sourceTree = "<group>"; };
+		456261C81CF2830300290AAC /* CNModalPassController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CNModalPassController.xib; sourceTree = "<group>"; };
 		4578BA441CE8808900A91F51 /* STPrivilegedTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STPrivilegedTask.h; sourceTree = "<group>"; };
 		4578BA451CE8808900A91F51 /* STPrivilegedTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STPrivilegedTask.m; sourceTree = "<group>"; };
 		4587EDB71C64185B0064A816 /* Mac Multi-Tool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mac Multi-Tool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -187,6 +192,16 @@
 			name = AAPLImageAndTextCell;
 			sourceTree = "<group>";
 		};
+		456261CB1CF2830900290AAC /* CNModalPassController */ = {
+			isa = PBXGroup;
+			children = (
+				456261C61CF2830300290AAC /* CNModalPassController.h */,
+				456261C71CF2830300290AAC /* CNModalPassController.m */,
+				456261C81CF2830300290AAC /* CNModalPassController.xib */,
+			);
+			name = CNModalPassController;
+			sourceTree = "<group>";
+		};
 		4587EDAE1C64185B0064A816 = {
 			isa = PBXGroup;
 			children = (
@@ -260,14 +275,15 @@
 		45C309031C66B5B000235F05 /* Disk Utility */ = {
 			isa = PBXGroup;
 			children = (
+				45D8A8771CEE9DDA008ADCBC /* CNCreateDiskController */,
+				456261CB1CF2830900290AAC /* CNModalPassController */,
 				45F34A8A1C670E1E00981A80 /* STPriviledgedTask */,
 				4587EDEA1C642C380064A816 /* CNOutlineView.h */,
 				4587EDEB1C642C380064A816 /* CNOutlineView.m */,
 				455DA3CF1C70526A0002D061 /* DiskUtilityController.h */,
 				455DA3D01C70526A0002D061 /* DiskUtilityController.m */,
-				45D8A8771CEE9DDA008ADCBC /* CNCreateDiskController */,
-				455DA3D21C70526A0002D061 /* Arbitration.m */,
 				455DA3D11C70526A0002D061 /* Arbitration.h */,
+				455DA3D21C70526A0002D061 /* Arbitration.m */,
 				455DA3D31C70526A0002D061 /* Disk.h */,
 				455DA3D41C70526A0002D061 /* Disk.m */,
 				45C308FE1C66B53000235F05 /* DiskUtilityController.xib */,
@@ -429,6 +445,7 @@
 				45B611561C709B5A0031F42F /* ToolbarItem Info.png in Resources */,
 				45B611551C709B5A0031F42F /* ToolbarItem Eject.png in Resources */,
 				45C3090D1C66DF5600235F05 /* CNPopoverController.xib in Resources */,
+				456261CA1CF2830300290AAC /* CNModalPassController.xib in Resources */,
 				4557AF801CEE5CF900048B07 /* NewImage-Highlight.png in Resources */,
 				4557AF721CEE533200048B07 /* Erase.png in Resources */,
 				455590C91C683A060099B4F4 /* SidebarExternalDisk.icns in Resources */,
@@ -480,6 +497,7 @@
 				45F34A941C670EE400981A80 /* CNDiskUtilities.m in Sources */,
 				45D8A8751CEE9319008ADCBC /* CNCreateDiskController.m in Sources */,
 				4578BA461CE8808900A91F51 /* STPrivilegedTask.m in Sources */,
+				456261C91CF2830300290AAC /* CNModalPassController.m in Sources */,
 				4587EDBC1C64185B0064A816 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -11,6 +11,7 @@
 #import "AAPLImageAndTextCell.h"
 #import "STPrivilegedTask.h"
 #import "CNCreateDiskController.h"
+#import "CNModalPassController.h"
 #import "CNPopoverController.h"
 
 @import ServiceManagement;
@@ -26,6 +27,7 @@ static NSSize imageSize;
 @interface DiskUtilityController ()
 
 @property (strong) CNCreateDiskController *diskController;
+@property (strong) CNModalPassController *passController;
 @property (strong) CNPopoverController *popoverViewController;
 @property (strong) NSWindow *detachedWindow;
 
@@ -129,13 +131,7 @@ static NSSize imageSize;
     
     
     // Clear the text fields in the window
-    [_mountPointText setStringValue:@""];
-    [_capacityText setStringValue:@""];
-    [_usedText setStringValue:@""];
-    [_uuidText setStringValue:@""];
-    [_typeText setStringValue:@""];
-    [_availableText setStringValue:@""];
-    [_deviceText setStringValue:@""];
+    [self clearMainWindow];
     
     [_uuidText setSelectable:YES];
     
@@ -191,6 +187,12 @@ static NSSize imageSize;
 - (void)respondToSelectedItem:(NSOutlineView *)outlineView {
     
     [_rebuildKextCacheButton setEnabled:YES];
+    
+    //Temp perma-disable for the new image button.  WIP
+    [_diskImageButton setEnabled:YES];
+    //[_diskImageButton setEnabled:NO];
+    
+    [_mountButton setEnabled:NO];
    
     id selectedItem = [outlineView itemAtRow:[outlineView selectedRow]];
     if ([selectedItem isKindOfClass:[Disk class]]) {
@@ -200,7 +202,6 @@ static NSSize imageSize;
         [_repairDiskButton setEnabled:YES];
         [_verifyDiskButton setEnabled:YES];
         //[_ejectButton setEnabled:NO];
-        [_mountButton setEnabled:NO];
         [_mountText setStringValue:@"Mount"];
         [_repairPermissionsButton setEnabled:NO];
         if ([disk isMounted]) {
@@ -233,9 +234,11 @@ static NSSize imageSize;
         if ([disk volumeName]) {
             [_diskNameField setStringValue:[disk volumeName]];
             [_diskImage setTitle:[NSString stringWithFormat:@"Image From %@...", [disk volumeName]]];
+            [_diskImage setEnabled:YES];
         } else if ([disk mediaName]) {
             [_diskNameField setStringValue:[disk mediaName]];
             [_diskImage setTitle:[NSString stringWithFormat:@"Image From %@...", [disk mediaName]]];
+            [_diskImage setEnabled:YES];
         }
         
         // Get the icon
@@ -284,6 +287,9 @@ static NSSize imageSize;
             [_diskSize incrementBy:[[disk usedSpace] doubleValue]];
         }
         [_deviceText setStringValue:disk.BSDName ?: @"No BSD Name"];
+    } else {
+        [self clearMainWindow];
+        _currentDisk = nil;
     }
 }
 
@@ -499,11 +505,38 @@ static NSSize imageSize;
     NSButton * b = (NSButton*)sender;
     NSPoint l = [ self convertPointToScreen:b.frame.origin ];
     
-    [_blankImage setEnabled:YES];
-    [_folderImage setEnabled:YES];
+    //Perma-disable below
+    //[_blankImage setEnabled:NO];
+    [_folderImage setEnabled:NO];
     [_diskImage setEnabled:NO];
     
     [ _diskImageMenu popUpMenuPositioningItem:nil atLocation:l inView:nil ];
+}
+
+- (IBAction)diskImageEncryptionChange:(id)sender {
+    NSString *encrypt = [_encryptionPopup titleOfSelectedItem];
+    if (![encrypt isEqualToString:@"none"]) {
+        [self.encryptionTextField setEnabled:YES];
+        [self.encryptionSecureField setEnabled:YES];
+        [self.encryptionShowButton setEnabled:YES];
+    } else {
+        [self.encryptionTextField setEnabled:NO];
+        [self.encryptionSecureField setEnabled:NO];
+        [self.encryptionShowButton setEnabled:NO];
+    }
+}
+
+- (IBAction)showPassword:(id)sender {
+    if ([self.encryptionShowButton state]) {
+        //Show the password
+        [self.encryptionTextField setStringValue:[self.encryptionSecureField stringValue]];
+        [self.encryptionSecureField setHidden:YES];
+        [self.encryptionTextField setHidden:NO];
+    } else {
+        [self.encryptionSecureField setStringValue:[self.encryptionTextField stringValue]];
+        [self.encryptionSecureField setHidden:NO];
+        [self.encryptionTextField setHidden:YES];
+    }
 }
 
 - (IBAction)diskImageBlankFormatChange:(id)sender {
@@ -571,6 +604,8 @@ static NSSize imageSize;
     [blank setCanSelectHiddenExtension:YES];
     [blank setAccessoryView:_blankImageView];
     
+    [self resetNewBlankImageView];
+    
     //Attach sheet
     [blank beginSheetModalForWindow:[[self view] window] completionHandler:^(NSInteger result) {
         //Handle the shit.
@@ -587,11 +622,11 @@ static NSSize imageSize;
             
             self.diskController = [[CNCreateDiskController alloc] initWithWindowNibName:@"CNCreateDiskController"];
             
-            //This is *only called to load the window nib.
+            //This is *ONLY* called to load the window nib.
             //Without it, we couldn't get references to the other parts.
             [self.diskController.window setTitle:@""];
             
-            //We need to preset all the fields
+            //We need to build our tasklist
             NSString *volName = [self.nameTextField stringValue];
             NSString *name = [NSString stringWithFormat:@"Creating \"%@\"...", volName];
             NSString *fs = [self.formatTypes objectAtIndex:[self.formatPopup indexOfSelectedItem]];
@@ -608,21 +643,98 @@ static NSSize imageSize;
                  }
                  size = [NSString stringWithFormat:@"%@%@", [self.sizeTextField stringValue], end];
              }
-            NSString *encrypt = [self.encryptionTypes objectAtIndex:[self.encryptionPopup indexOfSelectedItem]];
+            NSString *encrypt = @"";
+            NSString *pass = @"";
+            NSString *prefix = @"";
+            NSLog(@"Index of encryptitionPopup: %ld", (long)[self.encryptionPopup indexOfSelectedItem]);
+            if ([self.encryptionPopup indexOfSelectedItem]) {
+                NSLog(@"Encryption!!!");
+                //Encryption - let's find out if we have a password
+                if ([self.encryptionShowButton state]) {
+                    NSLog(@"Show");
+                    //We're pulling from the shown text field
+                    if (![[self.encryptionTextField stringValue] length]) {
+                        //0 length string = no password = no encryption
+                        encrypt = @"";
+                    } else {
+                        pass = [self.encryptionTextField stringValue];
+                        encrypt = [self.encryptionTypes objectAtIndex:[self.encryptionPopup indexOfSelectedItem]];
+                        prefix = [NSString stringWithFormat:@"echo \"%@\" | ", pass];
+                    }
+                } else {
+                    NSLog(@"Hidden");
+                    if (![[self.encryptionSecureField stringValue] length]) {
+                        //We're pulling from the hidden text field
+                        //0 length string = no password = no encryption
+                            encrypt = @"";
+                    } else {
+                            pass = [self.encryptionSecureField stringValue];
+                            encrypt = [self.encryptionTypes objectAtIndex:[self.encryptionPopup indexOfSelectedItem]];
+                            prefix = [NSString stringWithFormat:@"echo \"%@\" | ", pass];
+                    }
+                }
+            }
+            
+            //NSString *path = @"/bin/sh";
+            //NSArray *args = [NSArray arrayWithObjects:@"-c", [NSString stringWithFormat:@"echo y | /usr/sbin/diskutil repairDisk %@", _currentDisk.BSDName], nil];
+            
+            // /bin/sh -c echo -n pass can have spaces | /usr/bin/hdiutil create -puppetstrings -fs FS -type TYPE -layout LAYOUT -size SIZE -volname VOLNAME -encryption ENCRYPTION /Path/To/Output/File.dmg
+            
             NSString *layout = [self.partitionTypes objectAtIndex:[self.partitionsPopup indexOfSelectedItem]];
             NSString *type = [self.imageTypes objectAtIndex:[self.imageFormatPopup indexOfSelectedItem]];
             
+            //Build a string of commands.
+
+            NSString *theCommand = @"";
+
+            if ([encrypt length]) {
+                theCommand = [theCommand stringByAppendingString:[NSString stringWithFormat:@"echo \"%@\\0\" | /usr/bin/hdiutil create -puppetstrings -fs \"%@\" -type %@ -layout %@ -size %@ -volname \"%@\" -stdinpass -encryption %@ \"%@\"", pass, fs, type, layout, size, volName, encrypt, [theFile path]]];
+            } else {
+                theCommand = [theCommand stringByAppendingString:[NSString stringWithFormat:@"/usr/bin/hdiutil create -puppetstrings -fs \"%@\" -type %@ -layout %@ -size %@ -volname \"%@\" \"%@\"",
+                                                                  fs, type, layout, size, volName, [theFile path]]];
+            }
+            //[hdiutilCommand addObject:[theFile path]];
+            //theCommand = [theCommand stringByAppendingString:[NSString stringWithFormat:@" \"%@\"", [theFile path]]];
+            
+            
+            
+            //NSString *hdiCommand = [NSString stringWithFormat:@"%@/usr/bin/hdiutil create -puppetstrings -fs %@ -type %@ -layout %@ -size %@ %@%@", prefix, fs, type, layout, size, encrypt, [theFile path]];
+            
             NSString *desc = [NSString stringWithFormat:@"%@, %@, %@, %@, %@", type, fs, size, layout, encrypt];
+            NSString *start  = [NSString stringWithFormat:@"/bin/sh -c %@", theCommand];
+            
+            NSArray *args = [NSArray arrayWithObjects:@"-c", theCommand, nil];
+            
+            //NSLog(@"Running command: /bin/sh -c %@", theCommand);
+            
+            //Create an sh task so we can send a password in if needed.
+            
+            NSDictionary *command = [NSDictionary dictionaryWithObjectsAndKeys:@"/bin/sh", @"Path",
+                                                                                args, @"Args",
+                                                                                name, @"Title",
+                                                                                desc, @"Subtext",
+                                                                                @"Complete.", @"End Message",
+                                                                                start, @"Start Message",
+                                                                                nil];
+            
+            [self.diskController setTaskArray:[NSArray arrayWithObjects:command,nil]];
+            
+            //Run our task, then display the modal window
+            [self.diskController startProcess];
+            
+            //NSString *command = [NSString stringWithFormat:@"hdiutil create -fs \"%@\" -type %@ -layout %@ -size %@ -volname \"%@\" \"%@\"", fs, type, layout, size, volName, [theFile path]];
             
             
-            NSString *command = [NSString stringWithFormat:@"hdiutil create -fs \"%@\" -type %@ -layout %@ -size %@ -volname \"%@\" \"%@\"", fs, type, layout, size, volName, [theFile path]];
+            //Let's let the window handle this now - in the future if there are multiple tasks
+            //sent to the modal window - they should complete correctly.
             
-            
-            
-            
-            [self.diskController.detail setString:command];
+            /*[self.diskController.detail setString:command];
             [self.diskController.name setStringValue:name];
             [self.diskController.desc setStringValue:desc];
+            [self.diskController.progress setIndeterminate:YES];
+            [self.diskController.progress startAnimation:nil];*/
+            
+            //Build our privileged task and run it
             
             
             [[[self view] window] beginSheet:self.diskController.window  completionHandler:^(NSModalResponse returnCode) {
@@ -644,18 +756,16 @@ static NSSize imageSize;
                 }
             }];
             
-            
         }
         
     }];
     //[blank beginSheetModalForWindow:[[self view] window] modalDelegate:self didEndSelector:@selector(repairAlertDidEnd:returnCode:contextInfo:) contextInfo:nil];
     
-    
 }
 
-- (IBAction)doneWithSheet:(id)sender {
+/*- (IBAction)doneWithSheet:(id)sender {
     [_createImageModalWindow.sheetParent endSheet:_createImageModalWindow returnCode:NSModalResponseOK];
-}
+}*/
 
 - (IBAction)diskImageFolder:(id)sender {
     
@@ -824,11 +934,11 @@ static NSSize imageSize;
 #pragma mark - Notification Methods
 
 - (void)diskAppeared:(NSNotification *)notification {
-    Disk *disk = notification.object;
+    //Disk *disk = notification.object;
     
     //NSLog(@"Volume Path: %@", disk.volumePath);
     //NSLog(@"Disk Appeared: %@", disk.BSDName);
-    NSLog(@"Description: %@", disk.description);
+    //NSLog(@"Description: %@", disk.description);
 
     //NSLog(@"Disks Count - %lu", (unsigned long)[allDisks count]);
     //NSLog(@"Disks:\n%@", diskArray);
@@ -1046,6 +1156,27 @@ static NSSize imageSize;
     }
 }
 
+- (void)clearMainWindow {
+    // Clear the text fields in the window
+    [_mountPointText setStringValue:@""];
+    [_capacityText setStringValue:@""];
+    [_usedText setStringValue:@""];
+    [_uuidText setStringValue:@""];
+    [_typeText setStringValue:@""];
+    [_availableText setStringValue:@""];
+    [_deviceText setStringValue:@""];
+    [_diskNameField setStringValue:@""];
+    [_diskInfoField setStringValue:@""];
+    [_diskImageField setImage:nil];
+    [_diskSize setMaxValue:1];
+    [_diskSize setDoubleValue:0];
+    [_diskSize incrementBy:1];
+    
+    //No disks selected - can't make disk image from source
+    [_diskImage setTitle:@"Select disk to create image from source..."];
+    [_diskImage setEnabled:NO];
+}
+
 - (void)disableButtons {
     [_repairPermissionsButton setEnabled:NO];
     [_rebuildKextCacheButton setEnabled:NO];
@@ -1055,7 +1186,7 @@ static NSSize imageSize;
     [_mountButton setEnabled:NO];
     [_eraseButton setEnabled:NO];
     [_partitionButton setEnabled:NO];
-    //[_diskImageButton setEnabled:NO];
+    [_diskImageButton setEnabled:NO];
 }
 
 - (NSPoint) convertPointToScreen:(NSPoint)point
@@ -1068,6 +1199,28 @@ static NSSize imageSize;
     NSBeep();
     [_sizeTextField setStringValue:@"10"];
     [_sizeTextPopup selectItemWithTitle:@"MB"];
+}
+
+- (void)resetNewBlankImageView {
+    [_nameTextField setStringValue:@"Untitled"];
+    [_sizePopup selectItemAtIndex:0];
+    [_sizeTextField setStringValue:@"100"];
+    [_sizeTextPopup selectItemAtIndex:0];
+    [_formatPopup selectItemAtIndex:0];
+    [_encryptionPopup selectItemAtIndex:0];
+    [_encryptionShowButton setState:0];
+    [_encryptionShowButton setEnabled:NO];
+    [_encryptionTextField setStringValue:@""];
+    [_encryptionTextField setHidden:YES];
+    [_encryptionTextField setEnabled:NO];
+    [_encryptionSecureField setStringValue:@""];
+    [_encryptionSecureField setHidden:NO];
+    [_encryptionSecureField setEnabled:NO];
+    [_partitionsPopup selectItemAtIndex:2];
+    [_imageFormatPopup selectItemAtIndex:2];
+    [_sizePopup setHidden:YES];
+    [_sizeTextField setHidden:NO];
+    [_sizeTextPopup setHidden:NO];
 }
 
 @end
