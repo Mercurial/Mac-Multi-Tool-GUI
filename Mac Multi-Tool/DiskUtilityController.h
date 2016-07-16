@@ -21,6 +21,44 @@ enum {
     
 }
 
+//New Convert Image SavePanel Stuff
+@property (assign) IBOutlet NSView *convertImageView;
+@property (assign) IBOutlet NSTextField *convertVolumeNameText;
+@property (assign) IBOutlet NSPopUpButton *convertFormatPopup;
+@property (assign) IBOutlet NSPopUpButton *convertEncryptionPopup;
+@property (assign) IBOutlet NSPopUpButton *convertPartitionsPopup;
+@property (assign) IBOutlet NSPopUpButton *convertImageFormatPopup;
+@property (assign) IBOutlet NSSlider *convertCompressionSlider;
+@property (assign) IBOutlet NSTextField *convertCompressionText;
+@property (assign) IBOutlet NSButton *convertAdminPrivs;
+//@property (assign) IBOutlet NSButton *convertRemoveExtButton;
+
+//Convert Instead Window
+@property (assign) IBOutlet NSWindow *convertInsteadWindow;
+@property (assign) IBOutlet NSTextField *convertInsteadText;
+
+//Disk Image Locked Window
+@property (assign) IBOutlet NSWindow *convertEncryptedWindow;
+@property (assign) IBOutlet NSTextField *convertEncryptedText;
+
+//New Blank Image SavePanel Stuff
+@property (assign) IBOutlet NSView *blankImageView;
+@property (assign) IBOutlet NSTextField *nameTextField;
+@property (assign) IBOutlet NSPopUpButton *sizePopup;
+@property (assign) IBOutlet NSTextField *sizeTextField;
+@property (assign) IBOutlet NSPopUpButton *sizeTextPopup;
+@property (assign) IBOutlet NSPopUpButton *formatPopup;
+@property (assign) IBOutlet NSPopUpButton *encryptionPopup;
+//@property (assign) IBOutlet NSSecureTextField *encryptionSecureField;
+//@property (assign) IBOutlet NSTextField *encryptionTextField;
+//@property (assign) IBOutlet NSButton *encryptionShowButton;
+@property (assign) IBOutlet NSPopUpButton *partitionsPopup;
+@property (assign) IBOutlet NSPopUpButton *imageFormatPopup;
+@property (assign) IBOutlet NSButton *blankAdminPrivs;
+
+//######################################################
+//###              Main Window stuff                 ###
+//######################################################
 @property (weak) IBOutlet CNOutlineView *diskView;
 @property (weak) IBOutlet NSButton *verifyDiskButton;
 @property (weak) IBOutlet NSButton *repairDiskButton;
@@ -36,36 +74,17 @@ enum {
 @property (assign) IBOutlet NSButton *diskImageButton;
 @property (assign) IBOutlet NSMenu *diskImageMenu;
 
-@property (assign) IBOutlet NSView *blankImageView;
-
-/*@property (assign) IBOutlet NSWindow *createImageModalWindow;
-@property (assign) IBOutlet NSImageView *createImageModalImage;
-@property (assign) IBOutlet NSTextField *createImageModalNameText;
-@property (assign) IBOutlet NSTextField *createImageModalSubText;
-@property (assign) IBOutlet NSTextView *createImageModalDetailText;
-@property (assign) IBOutlet NSButton *createImageModalDone;
-@property (assign) IBOutlet NSProgressIndicator *createImageModalProgress;*/
-
-@property (assign) IBOutlet NSTextField *nameTextField;
-@property (assign) IBOutlet NSPopUpButton *sizePopup;
-@property (assign) IBOutlet NSTextField *sizeTextField;
-@property (assign) IBOutlet NSPopUpButton *sizeTextPopup;
-@property (assign) IBOutlet NSPopUpButton *formatPopup;
-@property (assign) IBOutlet NSPopUpButton *encryptionPopup;
-@property (assign) IBOutlet NSSecureTextField *encryptionSecureField;
-@property (assign) IBOutlet NSTextField *encryptionTextField;
-@property (assign) IBOutlet NSButton *encryptionShowButton;
-@property (assign) IBOutlet NSPopUpButton *partitionsPopup;
-@property (assign) IBOutlet NSPopUpButton *imageFormatPopup;
-
-@property (assign) IBOutlet NSMenuItem *blankImage;
-@property (assign) IBOutlet NSMenuItem *folderImage;
-@property (assign) IBOutlet NSMenuItem *diskImage;
-
+//Disk info top
 @property (assign) IBOutlet NSTextField *diskNameField;
 @property (assign) IBOutlet NSTextField *diskInfoField;
 @property (assign) IBOutlet NSImageView *diskImageField;
 
+//New image menu items
+@property (assign) IBOutlet NSMenuItem *blankImage;
+@property (assign) IBOutlet NSMenuItem *folderImage;
+@property (assign) IBOutlet NSMenuItem *diskImage;
+
+//Disk info main area
 @property (assign) IBOutlet NSTextField *mountPointText;
 @property (assign) IBOutlet NSTextField *capacityText;
 @property (assign) IBOutlet NSTextField *usedText;
@@ -78,10 +97,23 @@ enum {
 @property (assign) IBOutlet NSTextField *usedLocation;
 @property (assign) IBOutlet NSTextField *typeConnection;
 @property (assign) IBOutlet NSTextField *availableChildren;
-
 @property (assign) IBOutlet NSProgressIndicator *diskSize;
+//######################################################
+//###               End Main Window                  ###
+//######################################################
 
 
+//Password critical sheet window stuff
+@property (assign) IBOutlet NSWindow *passWindow;
+@property (assign) IBOutlet NSTextField *passNoBlank;
+@property (assign) IBOutlet NSSecureTextField *passOneSecureField;
+@property (assign) IBOutlet NSSecureTextField *passTwoSecureField;
+@property (assign) IBOutlet NSTextField *passOneTextField;
+@property (assign) IBOutlet NSTextField *passTwoTextField;
+@property (assign) IBOutlet NSButton *passShowButton;
+
+//Internal variables - that I guess are external
+//too or something...
 @property NSArray *disks;
 @property NSMutableArray *tasksToRun;
 @property Disk *currentDisk;
@@ -92,7 +124,15 @@ enum {
 @property NSArray *encryptionTypes;
 @property NSArray *partitionTypes;
 @property NSArray *imageTypes;
+@property NSArray *convertImageTypes;
 @property NSArray *cdSizeTypes;
+
+@property NSSavePanel *imageBlankSave;
+@property NSSavePanel *imageConvertSave;
+
+@property NSString *selectedDiskName;
+
+@property NSURL *convertURL;
 
 //Work with this more later - right now just a placeholder.
 @property BOOL currentlyWorking;

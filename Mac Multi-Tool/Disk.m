@@ -58,6 +58,9 @@
 @synthesize children;
 @synthesize isExpanded;
 
+@synthesize isBootDisk;
+@synthesize isBootVolume;
+
 
 #pragma mark - Public Methods
 
@@ -114,7 +117,11 @@
 
 	self = [self init];
 	if (self) {
+        
         isExpanded = NO;
+        isBootDisk = NO;
+        isBootVolume = NO;
+        
         if (!children) children = [[NSMutableArray alloc] init];
         
         //Create self stuff
@@ -154,6 +161,14 @@
                 }
                 CFRelease(parentRef);
             }
+            NSLog(@"Volname: %@", self.volumePath);
+            if ([self.volumePath isEqualToString:@"/"]) {
+                //Boot volume - mark as such, and mark parent as
+                //Boot disk.
+                isBootVolume = YES;
+                if (parent) parent.isBootDisk = YES;
+            }
+            
         } else {
             [diskArray addObject:self];
         }
@@ -419,6 +434,13 @@
     }
     
     return icon;
+}
+
+- (BOOL)isWriteable
+{
+    CFBooleanRef value = desc ? CFDictionaryGetValue(desc, kDADiskDescriptionMediaWritableKey) : NULL;
+    
+    return value ? CFBooleanGetValue(value) : NO;
 }
 
 - (BOOL)isMountable

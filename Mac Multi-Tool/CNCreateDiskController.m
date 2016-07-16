@@ -37,6 +37,8 @@
 }
 
 - (IBAction)didTapDoneButton:(id)sender {
+    //Clear our textview, then end sheet
+    [self.detail setString:@""];
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
@@ -52,6 +54,8 @@
     if (_taskList) {
         //We have a valid list - let's iterate through it.
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(privilegedTaskFinished:) name:@"STPrivilegedModalTaskDidTerminateNotification" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(privilegedTaskFinished:)  name: NSTaskDidTerminateNotification object:nil];
+        
         [self launchNextTask];
     } else {
         
@@ -72,22 +76,36 @@
         // do something with the data
         
         NSString *output = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        if ([output hasPrefix:@"PERCENT:"]) {
-            NSArray *percArray = [output componentsSeparatedByString:@":"];
-            float prog = [[percArray objectAtIndex:1] floatValue];
-            if (prog == -1) {
-                [self.progress setIndeterminate:YES];
-                [self.progress startAnimation:nil];
-            } else {
-                [self.progress setIndeterminate:NO];
-                [self.progress setMaxValue:100];
-                [self.progress setDoubleValue:prog];
+        
+        NSArray *lines = [output componentsSeparatedByString:@"\n"];
+        
+        for (int i = 0; i < [lines count]; ++i) {
+        
+            NSString *tempString = [lines objectAtIndex:i];
+            NSString *prefix = @"MESSAGE:";
+            if (![tempString hasSuffix:@"\n"] && [tempString length]) {
+                tempString = [tempString stringByAppendingString:@"\n"];
             }
-        } else {
-            [self appendOutput:output];
+        
+            if ([tempString hasPrefix:@"PERCENT:"]) {
+                NSArray *percArray = [tempString componentsSeparatedByString:@":"];
+                float prog = [[percArray objectAtIndex:1] floatValue];
+                if (prog == -1) {
+                    [self.progress setIndeterminate:YES];
+                    [self.progress startAnimation:nil];
+                } else {
+                    [self.progress setIndeterminate:NO];
+                    [self.progress setMaxValue:100];
+                    [self.progress setDoubleValue:prog];
+                }
+            } else if ([tempString hasPrefix:@"MESSAGE:"]) {
+                [self appendOutput:[tempString substringFromIndex:[prefix length]]];
+            } else {
+                [self appendOutput:tempString];
+            }
+            // go read more data in the background
+            [[aNotification object] readInBackgroundAndNotify];
         }
-        // go read more data in the background
-        [[aNotification object] readInBackgroundAndNotify];
     } else {
         // do something else
     }
@@ -106,6 +124,9 @@
 }
 
 - (void)privilegedTaskFinished:(NSNotification *)aNotification {
+    
+    if (![_taskList count]) return;
+    
     if ([[_taskList objectAtIndex:0] objectForKey:@"End Message"]) {
         [self appendOutput:[[_taskList objectAtIndex:0] objectForKey:@"End Message"]];
     }
@@ -132,11 +153,55 @@
             //There indeed ARE tasks to run :D
             NSString *path = [[_taskList objectAtIndex:0] objectForKey:@"Path"];
             NSArray *args = [[_taskList objectAtIndex:0] objectForKey:@"Args"];
-            [self launchPTWithPath:path arguments:args];
+            NSString *priv = [[_taskList objectAtIndex:0] objectForKey:@"Privilege"];
+            
+            if ([priv isEqualToString:@"Yes"]) {
+                [self launchPTWithPath:path arguments:args];
+            } else {
+                [self launchTWithPath:path arguments:args];
+            }
         }
         //No tasks - we're done.
     }
     //Currently running tasks - nothing to do yet.
+}
+
+- (void)launchTWithPath:(NSString *)path arguments:(NSArray *)args {
+    NSTask *task = [[NSTask alloc] init];
+    NSFileHandle *output;
+    NSPipe *outputpipe = [[NSPipe alloc] init];
+    [task setLaunchPath:path];
+    [task setArguments:args];
+    [task setStandardOutput:outputpipe];
+    [task setStandardError:outputpipe];
+    output = [outputpipe fileHandleForReading];
+    [task launch];
+    
+    //Launch our task
+    _runningTask=YES;
+    [self.progress setIndeterminate:YES];
+    [self.progress startAnimation:nil];
+    [_doneButton setEnabled:NO];
+    
+    //Check for a launch message...
+    if ([[_taskList objectAtIndex:0] objectForKey:@"Start Message"]) {
+        [self appendOutput:[[_taskList objectAtIndex:0] objectForKey:@"Start Message"]];
+    }
+    //Grab specific title - otherwise replace with task path
+    if ([[_taskList objectAtIndex:0] objectForKey:@"Title"]) {
+        [self.name setStringValue:[[_taskList objectAtIndex:0] objectForKey:@"Title"]];
+    } else {
+        [self.name setStringValue:[NSString stringWithFormat:@"Running task \"%@\"...", [[_taskList objectAtIndex:0] objectForKey:@"Path"]]];
+    }
+    //Grab subtext (description) if available
+    if ([[_taskList objectAtIndex:0] objectForKey:@"Subtext"]) {
+        [self.desc setStringValue:[[_taskList objectAtIndex:0] objectForKey:@"Subtext"]];
+    } else {
+        [self.desc setStringValue:@""];
+    }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getOutputData:) name:NSFileHandleReadCompletionNotification object:output];
+    [output readInBackgroundAndNotify];
 }
 
 - (void)launchPTWithPath:(NSString *)path arguments:(NSArray *)args {

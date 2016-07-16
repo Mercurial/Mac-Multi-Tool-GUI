@@ -56,6 +56,9 @@
 @property BOOL isExpanded;
 @property BOOL isMounting;
 
+@property BOOL isBootDisk;
+@property BOOL isBootVolume;
+
 + (Disk *)getDiskForDARef:(DADiskRef)diskRef;
 + (Disk *)getDiskForUserInfo:(NSDictionary *)userInfo;
 - (id)initWithDADiskRef:(DADiskRef)diskRef;
@@ -73,6 +76,7 @@
 - (NSString *)formattedFreeSpace;
 - (NSString *)formattedUsedSpace;
 - (NSString *)formattedSize;
+- (BOOL)isWriteable;
 - (BOOL)isWholeDisk;
 - (BOOL)isMounted;
 - (BOOL)isMountable;
