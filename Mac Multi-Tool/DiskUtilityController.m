@@ -357,7 +357,7 @@ static NSSize imageSize;
 -(IBAction)repairPermissions:(id)sender {
     NSLog(@"Repair Permissions");
     if (_currentDisk != nil && [_currentDisk volumePath]) {
-        NSLog(@"Disk: %@", [_currentDisk volumePath]);
+        //NSLog(@"Disk: %@", [_currentDisk volumePath]);
         //Build our privileged task for verifying disk
         
         //Disable buttons
@@ -368,6 +368,11 @@ static NSSize imageSize;
         //[self launchPTWithPath:@"/usr/libexec/repair_packages" arguments:[NSArray arrayWithObjects:@"--repair", @"--standard-pkgs", @"--volume", [_currentDisk volumePath], nil]];*/
         NSString *path = @"/usr/libexec/repair_packages";
         NSArray *args = [NSArray arrayWithObjects:@"--repair", @"--standard-pkgs", @"--volume", [_currentDisk volumePath], nil];
+        [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n", @"End Message", @"Repairing permissions...\n", @"Start Message", nil]];
+        [self launchNextTask];
+    } else {
+        NSString *path = @"/usr/libexec/repair_packages";
+        NSArray *args = [NSArray arrayWithObjects:@"--repair", @"--standard-pkgs", @"--volume", @"/", nil];
         [_tasksToRun addObject:[NSDictionary dictionaryWithObjectsAndKeys:path, @"Path", args, @"Args", @"Complete.\n\n", @"End Message", @"Repairing permissions...\n", @"Start Message", nil]];
         [self launchNextTask];
     }
