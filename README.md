@@ -23,6 +23,7 @@ There's some other functions peppered in, but we'll go over that in a second.
 * Repair permissions
 * Rebuild Kext Cache
 * Verify/Repair disks/partitions
+* Create/Convert disk images
 
 ##What's next?
 
@@ -35,7 +36,7 @@ If the stars align just right, it'll be an all-in-one package for most of the th
 * Erase disks/volumes
 * Partition disks
 * RAID (maybe...)
-* Create/Convert disk images
+* ~~Create/Convert disk images~~ (added!)
 
 After I have a solid foundation for *those* things, I'll start on the next modules.
 
