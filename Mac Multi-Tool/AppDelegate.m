@@ -33,6 +33,8 @@
         NSLog(@"Is less than 10.9.0 - Incompatible");
     }
     
+    [self.window makeKeyAndOrderFront:nil];
+    
 }
 
 - (IBAction)diskMenuApp:(id)sender {
@@ -42,6 +44,7 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
     
+    [self.window setTitle:@""];
     
     _toolbarTabsArray = [self toolbarItems];
     _toolbarTabsIdentifierArray = [NSMutableArray new];
@@ -61,11 +64,12 @@
     [[self.window windowController] setShouldCascadeWindows:NO];      // Tell the controller to not cascade its windows.
     [self.window setFrameAutosaveName:[self.window representedFilename]];  // Specify the autosave name for the window.
     
-    [self.window makeKeyAndOrderFront:nil];
+    //[self.window makeKeyAndOrderFront:nil];
     
     //Try to set disk utitily to the main window - just for the sake of doing it
     //until I get a decent amount of apps running...
     //Eventually - I want this loaded with prefs.
+    
     [_toolbar setSelectedItemIdentifier:@"DiskUtilityController"];
     [self loadViewWithIdentifier:@"DiskUtilityController" withAnimation:YES];
     
@@ -186,9 +190,10 @@
         windowRect.size.height = currentViewRect.size.height + tbHeight + tiHeight;
         windowRect.size.width = currentViewRect.size.width;
         
+        
         self.window.title = viewInfoDict[@"title"];
-        [self.window setContentView:newView];
         [self.window setFrame:windowRect display:YES animate:shouldAnimate];
+        [self.window setContentView:newView];
         
         // To create a window that can resize:
         // [window setStyleMask:[window styleMask] | NSResizableWindowMask];
@@ -197,7 +202,7 @@
         // [window setStyleMask:[window styleMask] & ~NSResizableWindowMask];
         
         //if (_currentViewController.shouldResize) {
-            
+        
         //}
         
         [self.window setStyleMask:[self.window styleMask] & ~NSResizableWindowMask];
